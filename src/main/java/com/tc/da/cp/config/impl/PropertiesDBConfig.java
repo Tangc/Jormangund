@@ -1,7 +1,13 @@
 package com.tc.da.cp.config.impl;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Properties;
 
 import com.tc.da.cp.config.DBConfig;
 
@@ -19,34 +25,40 @@ public class PropertiesDBConfig extends DBConfig {
 	 */
 	private String propertyfilepath;
 	
-	public PropertiesDBConfig() {
+	public PropertiesDBConfig() throws IOException {
 		propertyfilepath = ""; //defaultpath
-		params = new HashMap<String, String>();
+		params = new HashMap<String, String>(16);
 		loadProperties();
 	}
 	
-	public PropertiesDBConfig(String propertyfilepath) {
+	public PropertiesDBConfig(String propertyfilepath) throws IOException {
 		super();
 		this.propertyfilepath = propertyfilepath;
-		params = new HashMap<String, String>();
+		params = new HashMap<String, String>(16);
 		loadProperties();
 	}
 	
-	public void loadProperties(){
-		//TODO
-		System.out.println(propertyfilepath);
+	public void loadProperties() throws IOException{
+//		TODO log
+//		System.out.println(propertyfilepath);
+		InputStream in = new FileInputStream(new File(propertyfilepath));
+		Properties config = new Properties();
+		config.load(in);
+		for(Entry<Object, Object> entry: config.entrySet()){
+			String k = entry.getKey().toString();
+			String v = entry.getValue().toString();
+			params.put(k, v);
+		}
 	}
 
 	@Override
 	public String getParam(String key) {
-		//params.get(key)
-		return null;
+		return params.get(key);
 	}
 
 	@Override
 	public Map<String, String> getParams() {
-		//return params
-		return null;
+		return params;
 	}
 
 }
